@@ -23,9 +23,6 @@ public class MenuPrincipalView extends JFrame {
 	private JLabel labelExit;
 	int xMouse, yMouse;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -39,9 +36,6 @@ public class MenuPrincipalView extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public MenuPrincipalView() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(MenuPrincipalView.class.getResource("/img/aH-40px.png")));
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -76,13 +70,12 @@ public class MenuPrincipalView extends JFrame {
 		panel.add(panel_1);
 		panel_1.setLayout(null);
 
-		JLabel lblCopyR = new JLabel("Desarrollado por Fulanita de Tal © 2023");
+		JLabel lblCopyR = new JLabel("Desarrollado por Juankdns © 2023");
 		lblCopyR.setBounds(315, 11, 284, 19);
 		lblCopyR.setForeground(new Color(240, 248, 255));
-		lblCopyR.setFont(new Font("Roboto", Font.PLAIN, 16));
+		lblCopyR.setFont(new Font("Roboto", Font.PLAIN, 15));
 		panel_1.add(lblCopyR);
 
-		// Barra para controlar la ventana
 		JPanel header = new JPanel();
 		header.setBounds(0, 0, 910, 36);
 		header.addMouseMotionListener(new MouseMotionAdapter() {
@@ -102,7 +95,6 @@ public class MenuPrincipalView extends JFrame {
 		header.setBackground(Color.WHITE);
 		panel.add(header);
 
-		// Botón salir
 		JPanel btnexit = new JPanel();
 		btnexit.addMouseListener(new MouseAdapter() {
 			@Override
@@ -132,9 +124,8 @@ public class MenuPrincipalView extends JFrame {
 		labelExit.setBounds(0, 0, 53, 36);
 		btnexit.add(labelExit);
 		labelExit.setHorizontalAlignment(SwingConstants.CENTER);
-		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
+		labelExit.setFont(new Font("Roboto", Font.PLAIN, 20));
 
-		// Botón Login
 		JPanel btnLogin = new JPanel();
 		btnLogin.setBounds(754, 300, 83, 70);
 		btnLogin.addMouseListener(new MouseAdapter() {
@@ -165,8 +156,6 @@ public class MenuPrincipalView extends JFrame {
 		lblTitulo.setFont(new Font("Roboto Light", Font.PLAIN, 20));
 	}
 
-	// Código que permite movimentar a janela pela tela seguindo a posição de "x" e
-	// "y"
 	private void headerMousePressed(java.awt.event.MouseEvent evt) {
 		xMouse = evt.getX();
 		yMouse = evt.getY();

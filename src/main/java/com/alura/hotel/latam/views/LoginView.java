@@ -4,6 +4,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import com.alura.hotel.latam.bo.UsuarioBO;
+import com.alura.hotel.latam.dao.UsuarioDAO;
+import com.alura.hotel.latam.dao.UsuarioImpl;
+import com.alura.hotel.latam.dto.UsuarioDTO;
+import com.alura.hotel.latam.utils.JpaUtils;
+import com.alura.hotel.latam.vo.UsuarioVO;
+
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,9 +27,6 @@ import java.awt.event.MouseMotionAdapter;
 
 public class LoginView extends JFrame {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField txtUsuario;
@@ -30,9 +34,6 @@ public class LoginView extends JFrame {
 	int xMouse, yMouse;
 	private JLabel labelExit;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -46,9 +47,6 @@ public class LoginView extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public LoginView() {
 		setResizable(false);
 		setUndecorated(true);
@@ -106,7 +104,7 @@ public class LoginView extends JFrame {
 		labelExit.setBounds(0, 0, 53, 36);
 		btnexit.add(labelExit);
 		labelExit.setForeground(SystemColor.text);
-		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
+		labelExit.setFont(new Font("Roboto", Font.PLAIN, 20));
 		labelExit.setHorizontalAlignment(SwingConstants.CENTER);
 
 		txtUsuario = new JTextField();
@@ -123,7 +121,7 @@ public class LoginView extends JFrame {
 				}
 			}
 		});
-		txtUsuario.setFont(new Font("Roboto", Font.PLAIN, 16));
+		txtUsuario.setFont(new Font("Roboto", Font.PLAIN, 15));
 		txtUsuario.setText("Ingrese su nombre de usuario");
 		txtUsuario.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		txtUsuario.setForeground(SystemColor.activeCaptionBorder);
@@ -138,7 +136,7 @@ public class LoginView extends JFrame {
 
 		JLabel labelTitulo = new JLabel("INICIAR SESIÓN");
 		labelTitulo.setForeground(SystemColor.textHighlight);
-		labelTitulo.setFont(new Font("Roboto Black", Font.PLAIN, 26));
+		labelTitulo.setFont(new Font("Roboto Black", Font.PLAIN, 25));
 		labelTitulo.setBounds(65, 149, 202, 26);
 		panel.add(labelTitulo);
 
@@ -163,7 +161,7 @@ public class LoginView extends JFrame {
 			}
 		});
 		txtContrasena.setForeground(SystemColor.activeCaptionBorder);
-		txtContrasena.setFont(new Font("Roboto", Font.PLAIN, 16));
+		txtContrasena.setFont(new Font("Roboto", Font.PLAIN, 15));
 		txtContrasena.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 		txtContrasena.setBounds(65, 353, 324, 32);
 		panel.add(txtContrasena);
@@ -208,7 +206,7 @@ public class LoginView extends JFrame {
 		btnLogin.add(lblNewLabel);
 		lblNewLabel.setForeground(SystemColor.controlLtHighlight);
 		lblNewLabel.setHorizontalAlignment(SwingConstants.CENTER);
-		lblNewLabel.setFont(new Font("Roboto", Font.PLAIN, 18));
+		lblNewLabel.setFont(new Font("Roboto", Font.PLAIN, 20));
 
 		JLabel lblNewLabel_1 = new JLabel("");
 		lblNewLabel_1.setHorizontalAlignment(SwingConstants.CENTER);
@@ -237,12 +235,16 @@ public class LoginView extends JFrame {
 	}
 
 	private void login() {
-		String Usuario = "admin";
-		String Contraseña = "admin";
 
-		String contrase = new String(txtContrasena.getPassword());
+		String nombreUsuario = txtUsuario.getText();
+		String contrasena = new String(txtContrasena.getPassword());
 
-		if (txtUsuario.getText().equals(Usuario) && contrase.equals(Contraseña)) {
+		UsuarioDAO usuarioDAO = new UsuarioImpl(JpaUtils.getEntityManager());
+		UsuarioDTO usuarioDTO = new UsuarioDTO(nombreUsuario, contrasena);
+		UsuarioVO usuarioVO = new UsuarioVO(usuarioDTO);
+		UsuarioBO usuarioBO = new UsuarioBO(usuarioDAO);
+
+		if (usuarioBO.autenticar(usuarioVO)) {
 			MenuUsuarioView menu = new MenuUsuarioView();
 			menu.setVisible(true);
 			dispose();
@@ -254,7 +256,7 @@ public class LoginView extends JFrame {
 	private void headerMousePressed(java.awt.event.MouseEvent evt) {
 		xMouse = evt.getX();
 		yMouse = evt.getY();
-	}// GEN-LAST:event_headerMousePressed
+	}
 
 	private void headerMouseDragged(java.awt.event.MouseEvent evt) {
 		int x = evt.getXOnScreen();

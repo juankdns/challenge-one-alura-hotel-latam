@@ -21,9 +21,6 @@ public class ExitoView extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		try {
 			ExitoView dialog = new ExitoView();
@@ -34,9 +31,6 @@ public class ExitoView extends JDialog {
 		}
 	}
 
-	/**
-	 * Create the dialog.
-	 */
 	public ExitoView() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(ExitoView.class.getResource("/img/aH-40px.png")));
 		setBounds(100, 100, 394, 226);
@@ -67,7 +61,7 @@ public class ExitoView extends JDialog {
 				JButton okButton = new JButton("OK");
 				okButton.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent e) {
-						dispose();// sirve para cerrar la ventana actual
+						dispose();
 						MenuUsuarioView usuario = new MenuUsuarioView();
 						usuario.setVisible(true);
 					}
@@ -75,11 +69,6 @@ public class ExitoView extends JDialog {
 				okButton.setActionCommand("OK");
 				buttonPane.add(okButton);
 				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setActionCommand("Cancel");
-				buttonPane.add(cancelButton);
 			}
 		}
 	}

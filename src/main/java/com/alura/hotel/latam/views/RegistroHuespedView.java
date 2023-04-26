@@ -6,16 +6,26 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
 import java.awt.Color;
+
+import com.alura.hotel.latam.dao.HuespedDAO;
+import com.alura.hotel.latam.dao.HuespedImpl;
+import com.alura.hotel.latam.dto.HuespedDTO;
+import com.alura.hotel.latam.utils.JpaUtils;
+import com.alura.hotel.latam.vo.HuespedVO;
+import com.alura.hotel.latam.vo.ReservaVO;
 import com.toedter.calendar.JDateChooser;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.ImageIcon;
 import java.awt.SystemColor;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.util.Date;
 import java.awt.Toolkit;
 import javax.swing.SwingConstants;
 import javax.swing.JSeparator;
@@ -24,19 +34,17 @@ import javax.swing.JSeparator;
 public class RegistroHuespedView extends JFrame {
 
 	private JPanel contentPane;
-	private JTextField txtNombre;
-	private JTextField txtApellido;
-	private JTextField txtTelefono;
+	private static JTextField txtNombre;
+	private static JTextField txtApellido;
+	private static JTextField txtTelefono;
 	private JTextField txtNreserva;
-	private JDateChooser txtFechaN;
-	private JComboBox<String> txtNacionalidad;
+	private static JDateChooser txtFechaN;
+	private static JComboBox<String> txtNacionalidad;
 	private JLabel labelExit;
 	private JLabel labelAtras;
 	int xMouse, yMouse;
+	private ReservaVO reservaVO;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -50,9 +58,6 @@ public class RegistroHuespedView extends JFrame {
 		});
 	}
 
-	/**
-	 * Create the frame.
-	 */
 	public RegistroHuespedView() {
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(RegistroHuespedView.class.getResource("/img/lOGO-50PX.png")));
@@ -116,12 +121,12 @@ public class RegistroHuespedView extends JFrame {
 		labelAtras = new JLabel("<");
 		labelAtras.setHorizontalAlignment(SwingConstants.CENTER);
 		labelAtras.setForeground(Color.WHITE);
-		labelAtras.setFont(new Font("Roboto", Font.PLAIN, 23));
+		labelAtras.setFont(new Font("Roboto", Font.PLAIN, 20));
 		labelAtras.setBounds(0, 0, 53, 36);
 		btnAtras.add(labelAtras);
 
 		txtNombre = new JTextField();
-		txtNombre.setFont(new Font("Roboto", Font.PLAIN, 16));
+		txtNombre.setFont(new Font("Roboto", Font.PLAIN, 15));
 		txtNombre.setBounds(560, 135, 285, 33);
 		txtNombre.setBackground(Color.WHITE);
 		txtNombre.setColumns(10);
@@ -129,7 +134,7 @@ public class RegistroHuespedView extends JFrame {
 		contentPane.add(txtNombre);
 
 		txtApellido = new JTextField();
-		txtApellido.setFont(new Font("Roboto", Font.PLAIN, 16));
+		txtApellido.setFont(new Font("Roboto", Font.PLAIN, 15));
 		txtApellido.setBounds(560, 204, 285, 33);
 		txtApellido.setColumns(10);
 		txtApellido.setBackground(Color.WHITE);
@@ -137,17 +142,19 @@ public class RegistroHuespedView extends JFrame {
 		contentPane.add(txtApellido);
 
 		txtFechaN = new JDateChooser();
+		txtFechaN.getDateEditor().getUiComponent().setEnabled(false);
 		txtFechaN.setBounds(560, 278, 285, 36);
 		txtFechaN.getCalendarButton()
 				.setIcon(new ImageIcon(RegistroHuespedView.class.getResource("/img/icon-reservas.png")));
 		txtFechaN.getCalendarButton().setBackground(SystemColor.textHighlight);
 		txtFechaN.setDateFormatString("yyyy-MM-dd");
+		txtFechaN.setFont(new Font("Roboto", Font.PLAIN, 15));
 		contentPane.add(txtFechaN);
 
 		txtNacionalidad = new JComboBox<String>();
 		txtNacionalidad.setBounds(560, 350, 289, 36);
 		txtNacionalidad.setBackground(SystemColor.text);
-		txtNacionalidad.setFont(new Font("Roboto", Font.PLAIN, 16));
+		txtNacionalidad.setFont(new Font("Roboto", Font.PLAIN, 15));
 		txtNacionalidad.setModel(new DefaultComboBoxModel<String>(new String[] { "afgano-afgana", "alemán-", "alemana",
 				"árabe-árabe", "argentino-argentina", "australiano-australiana", "belga-belga", "boliviano-boliviana",
 				"brasileño-brasileña", "camboyano-camboyana", "canadiense-canadiense", "chileno-chilena", "chino-china",
@@ -169,35 +176,35 @@ public class RegistroHuespedView extends JFrame {
 		JLabel lblNombre = new JLabel("NOMBRE");
 		lblNombre.setBounds(562, 119, 253, 14);
 		lblNombre.setForeground(SystemColor.textInactiveText);
-		lblNombre.setFont(new Font("Roboto Black", Font.PLAIN, 18));
+		lblNombre.setFont(new Font("Roboto Black", Font.PLAIN, 15));
 		contentPane.add(lblNombre);
 
 		JLabel lblApellido = new JLabel("APELLIDO");
 		lblApellido.setBounds(560, 189, 255, 14);
 		lblApellido.setForeground(SystemColor.textInactiveText);
-		lblApellido.setFont(new Font("Roboto Black", Font.PLAIN, 18));
+		lblApellido.setFont(new Font("Roboto Black", Font.PLAIN, 15));
 		contentPane.add(lblApellido);
 
 		JLabel lblFechaN = new JLabel("FECHA DE NACIMIENTO");
 		lblFechaN.setBounds(560, 256, 255, 14);
 		lblFechaN.setForeground(SystemColor.textInactiveText);
-		lblFechaN.setFont(new Font("Roboto Black", Font.PLAIN, 18));
+		lblFechaN.setFont(new Font("Roboto Black", Font.PLAIN, 15));
 		contentPane.add(lblFechaN);
 
 		JLabel lblNacionalidad = new JLabel("NACIONALIDAD");
 		lblNacionalidad.setBounds(560, 326, 255, 14);
 		lblNacionalidad.setForeground(SystemColor.textInactiveText);
-		lblNacionalidad.setFont(new Font("Roboto Black", Font.PLAIN, 18));
+		lblNacionalidad.setFont(new Font("Roboto Black", Font.PLAIN, 15));
 		contentPane.add(lblNacionalidad);
 
 		JLabel lblTelefono = new JLabel("TELÉFONO");
 		lblTelefono.setBounds(562, 406, 253, 14);
 		lblTelefono.setForeground(SystemColor.textInactiveText);
-		lblTelefono.setFont(new Font("Roboto Black", Font.PLAIN, 18));
+		lblTelefono.setFont(new Font("Roboto Black", Font.PLAIN, 15));
 		contentPane.add(lblTelefono);
 
 		txtTelefono = new JTextField();
-		txtTelefono.setFont(new Font("Roboto", Font.PLAIN, 16));
+		txtTelefono.setFont(new Font("Roboto", Font.PLAIN, 15));
 		txtTelefono.setBounds(560, 424, 285, 33);
 		txtTelefono.setColumns(10);
 		txtTelefono.setBackground(Color.WHITE);
@@ -207,17 +214,17 @@ public class RegistroHuespedView extends JFrame {
 		JLabel lblTitulo = new JLabel("REGISTRO HUÉSPED");
 		lblTitulo.setBounds(606, 55, 234, 42);
 		lblTitulo.setForeground(new Color(12, 138, 199));
-		lblTitulo.setFont(new Font("Roboto Black", Font.PLAIN, 23));
+		lblTitulo.setFont(new Font("Roboto Black", Font.PLAIN, 15));
 		contentPane.add(lblTitulo);
 
 		JLabel lblNumeroReserva = new JLabel("NÚMERO DE RESERVA");
 		lblNumeroReserva.setBounds(560, 474, 253, 14);
 		lblNumeroReserva.setForeground(SystemColor.textInactiveText);
-		lblNumeroReserva.setFont(new Font("Roboto Black", Font.PLAIN, 18));
+		lblNumeroReserva.setFont(new Font("Roboto Black", Font.PLAIN, 15));
 		contentPane.add(lblNumeroReserva);
 
 		txtNreserva = new JTextField();
-		txtNreserva.setFont(new Font("Roboto", Font.PLAIN, 16));
+		txtNreserva.setFont(new Font("Roboto", Font.PLAIN, 15));
 		txtNreserva.setBounds(560, 495, 285, 33);
 		txtNreserva.setColumns(10);
 		txtNreserva.setBackground(Color.WHITE);
@@ -265,6 +272,27 @@ public class RegistroHuespedView extends JFrame {
 		btnguardar.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				String nombre = RegistroHuespedView.txtNombre.getText();
+				String apellido = RegistroHuespedView.txtApellido.getText();
+				Date fechaNacimiento = RegistroHuespedView.txtFechaN.getDate();
+				String nacionalidad = RegistroHuespedView.txtNacionalidad.getSelectedItem().toString();
+				String telefono = RegistroHuespedView.txtTelefono.getText();
+
+				if (!nombre.isEmpty() && !apellido.isEmpty() && fechaNacimiento != null && !nacionalidad.isEmpty()
+						&& !telefono.isEmpty()) {
+					HuespedDAO huespedDAO = new HuespedImpl(JpaUtils.getEntityManager());
+					HuespedDTO huespedDTO = new HuespedDTO(nombre, apellido, fechaNacimiento, nacionalidad, telefono,
+							reservaVO);
+					HuespedVO huespedVO = new HuespedVO(huespedDTO);
+					huespedDAO.crearHuesped(huespedVO);
+
+					ExitoView exitoView = new ExitoView();
+					exitoView.setVisible(true);
+					dispose();
+
+				} else {
+					JOptionPane.showMessageDialog(null, "Debes llenar todos los campos.");
+				}
 			}
 		});
 		btnguardar.setLayout(null);
@@ -275,7 +303,7 @@ public class RegistroHuespedView extends JFrame {
 		JLabel labelGuardar = new JLabel("GUARDAR");
 		labelGuardar.setHorizontalAlignment(SwingConstants.CENTER);
 		labelGuardar.setForeground(Color.WHITE);
-		labelGuardar.setFont(new Font("Roboto", Font.PLAIN, 18));
+		labelGuardar.setFont(new Font("Roboto", Font.PLAIN, 15));
 		labelGuardar.setBounds(0, 0, 122, 35);
 		btnguardar.add(labelGuardar);
 
@@ -296,13 +324,11 @@ public class RegistroHuespedView extends JFrame {
 		logo.setIcon(new ImageIcon(RegistroHuespedView.class.getResource("/img/Ha-100px.png")));
 
 		JPanel btnexit = new JPanel();
-		btnexit.setBounds(857, 0, 53, 36);
-		contentPane.add(btnexit);
 		btnexit.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				MenuPrincipalView principal = new MenuPrincipalView();
-				principal.setVisible(true);
+				MenuUsuarioView usuario = new MenuUsuarioView();
+				usuario.setVisible(true);
 				dispose();
 			}
 
@@ -320,17 +346,17 @@ public class RegistroHuespedView extends JFrame {
 		});
 		btnexit.setLayout(null);
 		btnexit.setBackground(Color.white);
+		btnexit.setBounds(857, 0, 53, 36);
+		header.add(btnexit);
 
 		labelExit = new JLabel("X");
+		labelExit.setForeground(SystemColor.black);
 		labelExit.setBounds(0, 0, 53, 36);
 		btnexit.add(labelExit);
 		labelExit.setHorizontalAlignment(SwingConstants.CENTER);
-		labelExit.setForeground(SystemColor.black);
-		labelExit.setFont(new Font("Roboto", Font.PLAIN, 18));
+		labelExit.setFont(new Font("Roboto", Font.PLAIN, 20));
 	}
 
-	// Código que permite mover la ventana por la pantalla según la posición de "x"
-	// y "y"
 	private void headerMousePressed(java.awt.event.MouseEvent evt) {
 		xMouse = evt.getX();
 		yMouse = evt.getY();
@@ -340,6 +366,12 @@ public class RegistroHuespedView extends JFrame {
 		int x = evt.getXOnScreen();
 		int y = evt.getYOnScreen();
 		this.setLocation(x - xMouse, y - yMouse);
+	}
+
+	public void reservaModelo(ReservaVO reservaVo) {
+		String idText = String.valueOf(reservaVo.getId());
+		this.txtNreserva.setText(idText);
+		this.reservaVO = reservaVo;
 	}
 
 }
